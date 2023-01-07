@@ -33,6 +33,7 @@ Educational and Psychological Measurement, 77(3), 529-539.
 
 Other bayesian-test: 
 \code{\link{as_pvalue}()},
+\code{\link{bf_and_pvalue}()},
 \code{\link{bf_from_os}()}
 }
 \concept{bayesian-test}

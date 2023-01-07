@@ -103,12 +103,12 @@ scores, <code>os_test</code>, are worse off relative to the training set.</p>
 </ul></div>
     <div id="details">
     <h2>Details</h2>
-    <p>The empirical null distribution uses <code>n_pt</code> permutations to estimate
-the p-value. For speed, this is implemented as a sequential Monte Carlo test
+    <p>The null distribution of the test statistic is based on <code>n_pt</code>
+permutations. For speed, this is implemented as a sequential Monte Carlo test
 with the <span class="pkg">simctest</span> package. See Gandy (2009) for details. The prefix
 <em>pt</em> refers to permutation test. This approach does not use the
-asymptotic null distribution for the weighted AUC (WAUC), the test
-statistic. This is the recommended approach for small samples.</p>
+asymptotic null distribution for the test statistic. This is the recommended
+approach for small samples. The test statistic is the weighted AUC (WAUC).</p>
     </div>
     <div id="notes">
     <h2>Notes</h2>

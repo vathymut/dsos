@@ -25,6 +25,7 @@ reference:
       - bf_from_os
       - as_pvalue
       - as_bf
+      - bf_and_pvalue
   - title: "Generic Functions"
     desc: >
       S3 methods (generics).
