@@ -81,12 +81,12 @@ exchangeable_null <- function(x_train,
 #' Journal of the American Statistical Association, 104(488), 1504-1511.
 #'
 #' @details
-#' The empirical null distribution uses \code{n_pt} permutations to estimate
-#' the p-value. For speed, this is implemented as a sequential Monte Carlo test
+#' The null distribution of the test statistic is based on \code{n_pt}
+#' permutations. For speed, this is implemented as a sequential Monte Carlo test
 #' with the \pkg{simctest} package. See Gandy (2009) for details. The prefix
 #' \emph{pt} refers to permutation test. This approach does not use the
-#' asymptotic null distribution for the weighted AUC (WAUC), the test
-#' statistic. This is the recommended approach for small samples.
+#' asymptotic null distribution for the test statistic. This is the recommended
+#' approach for small samples. The test statistic is the weighted AUC (WAUC).
 #'
 #' @section Notes:
 #' The scoring function, \code{scorer}, predicts out-of-bag scores to mimic

@@ -243,8 +243,8 @@ print.outlier.bayes <- function(x, ...) {
     bf_fmt <- paste("=", bf_str)
     out <- c(out, paste("Bayes factor (BF)", bf_fmt))
   }
-  if (!is.null(x[["adverse_threshold"]])) {
-    wauc_str <- round(x[["adverse_threshold"]], 4)
+  if (!is.null(x[["threshold"]])) {
+    wauc_str <- round(x[["threshold"]], 4)
     wauc_fmt <- paste("=", wauc_str)
     out <- c(out, paste("cutoff (weighted AUC/WAUC)", wauc_fmt))
   }

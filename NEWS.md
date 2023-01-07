@@ -7,6 +7,8 @@
 (`print` and `plot`) and helper functions to convert bayes factors to p-values
 (`as_pvalue` and `as_bf`).
 
+* Added function (`bf_and_pvalue`) to compare Bayesian to Frequentist test.
+
 ## Breaking changes
 
 * Deleted custom scoring functions (`score_*`) which depended on

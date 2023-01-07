@@ -68,49 +68,24 @@ wauc_samples <- function(os_train, os_test, n_pt = 4e3) {
   return(list(permuted = wauc_dist[1, ], posterior = wauc_dist[2, ]))
 }
 
-#' @noRd
-#' @keywords  internal
-bf_and_pvalue <- function(os_train,
-                          os_test,
-                          adverse_threshold = 1 / 12,
-                          n_pt = 4e3) {
-  draws <- wauc_samples(os_train, os_test, n_pt = n_pt)
-  # Get p-value
-  permuted <- draws$permuted
-  test_stat <- wauc_from_os(os_train, os_test)
-  p_value <- 1 - stats::ecdf(permuted)(test_stat)
-  # Get bayes factor from asymptotic threshold
-  posterior <- draws$posterior
-  cdf_fn <- stats::ecdf(posterior)
-  asym_prob <- 1 - cdf_fn(adverse_threshold)
-  asym_bf <- asym_prob / (1 - asym_prob)
-  # Get bayes factor from exchangeable threshold
-  pt_threshold <- stats::quantile(permuted, probs = 0.5)
-  pt_prob <- 1 - cdf_fn(pt_threshold)
-  pt_bf <- pt_prob / (1 - pt_prob)
-  bayes_factor <- list(exchangeable = pt_bf, asymptotic = asym_bf)
-  return(list(bayes_factor = bayes_factor, p_value = p_value))
-}
-
 #' @title
 #' Bayesian Test from Outlier Scores
-#'
-#' @description
-#' Test for no adverse shift with outlier scores. Like goodness-of-fit testing,
-#' this two-sample comparison takes the training (outlier) scores,
-#' \code{os_train}, as the reference. The method checks whether the test
-#' scores, \code{os_test}, are worse off relative to the training set.
 #'
 #' @param os_train Outlier scores in training (reference) set.
 #' @param os_test Outlier scores in test set.
 #' @param n_pt The number of permutations.
-#' @param adverse_threshold WAUC threshold for adverse shift.
+#' @param threshold Threshold for adverse shift. Defaults to 1 / 12,
+#' the asymptotic value of the test statistic when the two samples are drawn
+#' from the same distribution.
+#'
+#' @inherit pt_from_os description
+#' @inheritSection at_from_os Notes
 #'
 #' @return
 #' A named list of class \code{outlier.bayes} containing:
 #' \itemize{
 #'    \item \code{posterior}: Posterior distribution of WAUC test statistic
-#'    \item \code{adverse_threshold}: WAUC threshold for adverse shift
+#'    \item \code{threshold}: WAUC threshold for adverse shift
 #'    \item \code{adverse_probability}: probability of adverse shift
 #'    \item \code{bayes_factor}: Bayes factor
 #'    \item \code{outlier_scores}: outlier scores from training and test set
@@ -129,12 +104,11 @@ bf_and_pvalue <- function(os_train,
 #' Statistics in medicine, 27(26), 5407-5420.
 #'
 #' @details
-#' The posterior distribution of the WAUC test statistic is based on \code{n_pt}
-#' (boostrap) permutations. The method relies on the Bayesian bootstrap as
-#' a resampling procedure to smooth the instance weights as in Gu et al (2008).
-#' This framework borrows from Johnson (2005), which shows how to turn a test
-#' statistic, which may very well be frequentist, into its Bayesian counterpart,
-#' the bayes factor.
+#' The posterior distribution of the test statistic is based on \code{n_pt}
+#' (boostrap) permutations. The method uses the Bayesian bootstrap as a
+#' resampling procedure as in Gu et al (2008). Johnson (2005) shows to
+#' leverage (turn) a test statistic into a Bayes factor. The test statistic
+#' is the weighted AUC (WAUC).
 #'
 #' @examples
 #' \donttest{
@@ -157,19 +131,90 @@ bf_and_pvalue <- function(os_train,
 bf_from_os <- function(os_train,
                        os_test,
                        n_pt = 4e3,
-                       adverse_threshold = 1 / 12) {
+                       threshold = 1 / 12) {
   posterior <- wauc_bb(os_train, os_test, n_pt = n_pt)
-  adverse_prob <- 1 - stats::ecdf(posterior)(adverse_threshold)
+  adverse_prob <- 1 - stats::ecdf(posterior)(threshold)
   bayes_factor <- adverse_prob / (1 - adverse_prob)
   result <- list(
     posterior = posterior,
-    adverse_threshold = adverse_threshold,
+    threshold = threshold,
     adverse_probability = adverse_prob,
     bayes_factor = bayes_factor,
     outlier_scores = list(train = os_train, test = os_test)
   )
   class(result) <- "outlier.bayes"
   return(result)
+}
+
+#' @title
+#' Bayesian and Permutation (Frequentist) Test from Outlier Scores
+#'
+#' @inherit pt_from_os description
+#' @inheritSection at_from_os Notes
+#' @inheritParams bf_from_os
+#'
+#' @return
+#' A nested list containing:
+#' \itemize{
+#'    \item \code{p_value}: p-value from permutation (frequentist) test.
+#'    \item \code{bayes_factor}: Bayes factors (BF) from Bayestion tests.
+#'       \itemize{
+#'          \item \code{asymptotic}: BF with asymptotic threshold.
+#'          \item \code{exchangeable}: BF with exchangeable threshold.
+#'       }
+#' }
+#'
+#' @details
+#' This compares the Bayesian to the frequentist approach for convenience.
+#' The Bayesian test mimics `bf_from_os()` and the frequentist one,
+#' `pt_from_os()`. The Bayesian test computes Bayes factors based on the
+#' asymptotic (defaults to 1/12) and the exchangeable threshold. The latter
+#' calculates the threshold as the median weighted AUC (WAUC) after \code{n_pt}
+#' permutations assuming outlier scores are exchangeable. This is
+#' recommended for small samples.
+#'
+#' @examples
+#' \donttest{
+#' library(dsos)
+#' set.seed(12345)
+#' os_train <- rnorm(n = 100)
+#' os_test <- rnorm(n = 100)
+#' bayes_test <- bf_and_pvalue(os_train, os_test)
+#' bayes_test
+#' # Run in parallel on local cluster
+#' library(future)
+#' future::plan(future::multisession)
+#' parallel_test <- bf_and_pvalue(os_train, os_test)
+#' parallel_test
+#' }
+#'
+#' @family bayesian-test
+#'
+#' @seealso
+#' [bf_from_os()] for bayes factor, the Bayesian test.
+#' [pt_from_os()] for p-value, the frequentist test.
+#'
+#' @export
+bf_and_pvalue <- function(os_train,
+                          os_test,
+                          threshold = 1 / 12,
+                          n_pt = 4e3) {
+  draws <- wauc_samples(os_train, os_test, n_pt = n_pt)
+  # Get p-value
+  permuted <- draws$permuted
+  test_stat <- wauc_from_os(os_train, os_test)
+  p_value <- 1 - stats::ecdf(permuted)(test_stat)
+  # Get bayes factor from asymptotic threshold
+  posterior <- draws$posterior
+  cdf_fn <- stats::ecdf(posterior)
+  asym_prob <- 1 - cdf_fn(threshold)
+  asym_bf <- asym_prob / (1 - asym_prob)
+  # Get bayes factor from exchangeable threshold
+  pt_threshold <- stats::quantile(permuted, probs = 0.5)
+  pt_prob <- 1 - cdf_fn(pt_threshold)
+  pt_bf <- pt_prob / (1 - pt_prob)
+  bayes_factor <- list(exchangeable = pt_bf, asymptotic = asym_bf)
+  return(list(bayes_factor = bayes_factor, p_value = p_value))
 }
 
 #' @title
