@@ -47,14 +47,14 @@ install.packages("dsos")
 ## Quick Start
 
 Simulate outlier scores to test for no adverse shift when the null (no
-difference) holds. First, we use the permutation test:
+shift) holds. First, we use the frequentist permutation test:
 
 ``` r
 library(dsos)
 set.seed(12345)
 n <- 6e2
-os_train <- rnorm(n=n)
-os_test <- rnorm(n=n)
+os_train <- rnorm(n = n)
+os_test <- rnorm(n = n)
 null_pt <- pt_from_os(os_train, os_test)
 plot(null_pt)
 ```
@@ -109,7 +109,23 @@ as_pvalue(shift_bf$bayes_factor)
 ```
 
 We would reject the null of no adverse shift in both cases: the test set
-is worse off when compared to the reference (training) scores.
+is worse off relative to the reference (training) scores.
+
+The function `bf_compare` comes in handy. It computes and compares Bayes
+factors for the frequentist and Bayesian approach at the same time.
+
+``` r
+shift_all <- bf_compare(os_train, os_shift)
+shift_all
+#> $bayes_perm
+#> [1] 37.46154
+#> 
+#> $bayes_noperm
+#> [1] 43.44444
+#> 
+#> $frequentist
+#> [1] 30.25
+```
 
 ## Reference
 

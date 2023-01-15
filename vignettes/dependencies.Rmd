@@ -13,12 +13,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The key components of `dsos` depend on several publicly available `R` packages,
-including:
+The key components of `dsos` leverage several `R` packages, including:
 
 - the `data.table` package [@data.table] for faster `data.frame`.
-- the `ranger` package [@ranger] for random forest;
-- the `isotree` package [@isotree] for isolation-based outlier detection;
 - the `ggplot2` package [@ggplot2] for visualizations;
 - the `WeightedROC` package [@WeightedROC] for computing the test statistic;
 - the `simctest` package [@simctest] for sequential Monte Carlo tests;

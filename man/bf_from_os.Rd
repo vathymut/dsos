@@ -69,7 +69,7 @@ parallel_test
 }
 \references{
 Kamulete, V. M. (2023).
-\emph{Are you OK? A Bayesian sequential test for adverse shift}.
+\emph{Are you OK? A Bayesian test for adverse shift}.
 Manuscript in preparation.
 
 Johnson, V. E. (2005).
@@ -84,6 +84,6 @@ Statistics in medicine, 27(26), 5407-5420.
 Other bayesian-test: 
 \code{\link{as_bf}()},
 \code{\link{as_pvalue}()},
-\code{\link{bf_and_pvalue}()}
+\code{\link{bf_compare}()}
 }
 \concept{bayesian-test}

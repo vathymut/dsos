@@ -23,9 +23,9 @@ reference:
       Bayesian test for no adverse shift via Bayesian bootstrap.
     contents:
       - bf_from_os
+      - bf_compare
       - as_pvalue
       - as_bf
-      - bf_and_pvalue
   - title: "Generic Functions"
     desc: >
       S3 methods (generics).
