@@ -92,7 +92,7 @@ wauc_samples <- function(os_train, os_test, n_pt = 4e3) {
 #' }
 #'
 #' @references Kamulete, V. M. (2023).
-#' \emph{Are you OK? A Bayesian sequential test for adverse shift}.
+#' \emph{Are you OK? A Bayesian test for adverse shift}.
 #' Manuscript in preparation.
 #'
 #' @references Johnson, V. E. (2005).
@@ -147,21 +147,18 @@ bf_from_os <- function(os_train,
 }
 
 #' @title
-#' Bayesian and Permutation (Frequentist) Test from Outlier Scores
+#' Bayesian and Frequentist Test from Outlier Scores
 #'
 #' @inherit pt_from_os description
 #' @inheritSection at_from_os Notes
 #' @inheritParams bf_from_os
 #'
 #' @return
-#' A nested list containing:
+#' A list of factors (BF) for 3 different test specifications:
 #' \itemize{
-#'    \item \code{p_value}: p-value from permutation (frequentist) test.
-#'    \item \code{bayes_factor}: Bayes factors (BF) from Bayestion tests.
-#'       \itemize{
-#'          \item \code{asymptotic}: BF with asymptotic threshold.
-#'          \item \code{exchangeable}: BF with exchangeable threshold.
-#'       }
+#'    \item \code{frequentist}: Frequentist BF.
+#'    \item \code{bayes_noperm}: Bayestion BF test with asymptotic threshold.
+#'    \item \code{bayes_perm}: Bayestion BF with exchangeable threshold.
 #' }
 #'
 #' @details
@@ -170,8 +167,9 @@ bf_from_os <- function(os_train,
 #' `pt_from_os()`. The Bayesian test computes Bayes factors based on the
 #' asymptotic (defaults to 1/12) and the exchangeable threshold. The latter
 #' calculates the threshold as the median weighted AUC (WAUC) after \code{n_pt}
-#' permutations assuming outlier scores are exchangeable. This is
-#' recommended for small samples.
+#' permutations assuming outlier scores are exchangeable. This is recommended
+#' for small samples. The frequentist test converts the one-sided (one-tailed)
+#' p-value to the Bayes factor - see \code{as_bf} function.
 #'
 #' @examples
 #' \donttest{
@@ -179,12 +177,12 @@ bf_from_os <- function(os_train,
 #' set.seed(12345)
 #' os_train <- rnorm(n = 100)
 #' os_test <- rnorm(n = 100)
-#' bayes_test <- bf_and_pvalue(os_train, os_test)
+#' bayes_test <- bf_compare(os_train, os_test)
 #' bayes_test
 #' # Run in parallel on local cluster
 #' library(future)
 #' future::plan(future::multisession)
-#' parallel_test <- bf_and_pvalue(os_train, os_test)
+#' parallel_test <- bf_compare(os_train, os_test)
 #' parallel_test
 #' }
 #'
@@ -195,15 +193,16 @@ bf_from_os <- function(os_train,
 #' [pt_from_os()] for p-value, the frequentist test.
 #'
 #' @export
-bf_and_pvalue <- function(os_train,
-                          os_test,
-                          threshold = 1 / 12,
-                          n_pt = 4e3) {
+bf_compare <- function(os_train,
+                       os_test,
+                       threshold = 1 / 12,
+                       n_pt = 4e3) {
   draws <- wauc_samples(os_train, os_test, n_pt = n_pt)
   # Get p-value
   permuted <- draws$permuted
   test_stat <- wauc_from_os(os_train, os_test)
   p_value <- 1 - stats::ecdf(permuted)(test_stat)
+  freq_bf <- as_bf(p_value)
   # Get bayes factor from asymptotic threshold
   posterior <- draws$posterior
   cdf_fn <- stats::ecdf(posterior)
@@ -213,8 +212,9 @@ bf_and_pvalue <- function(os_train,
   pt_threshold <- stats::quantile(permuted, probs = 0.5)
   pt_prob <- 1 - cdf_fn(pt_threshold)
   pt_bf <- pt_prob / (1 - pt_prob)
-  bayes_factor <- list(exchangeable = pt_bf, asymptotic = asym_bf)
-  return(list(bayes_factor = bayes_factor, p_value = p_value))
+  bf <- list(bayes_perm = pt_bf, bayes_noperm = asym_bf)
+  bf[["frequentist"]] <- freq_bf
+  return(bf)
 }
 
 #' @title
@@ -257,7 +257,7 @@ as_bf <- function(pvalue) {
 #' @references Marsman, M., & Wagenmakers, E. J. (2017).
 #' \emph{Three insights from a Bayesian interpretation of the one-sided P value}.
 #' Educational and Psychological Measurement, 77(3), 529-539.
-#' 
+#'
 #' @examples
 #' \donttest{
 #' library(dsos)
