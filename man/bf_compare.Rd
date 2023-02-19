@@ -60,9 +60,9 @@ os_train <- rnorm(n = 100)
 os_test <- rnorm(n = 100)
 bayes_test <- bf_compare(os_train, os_test)
 bayes_test
-# Run in parallel on local cluster
-library(future)
-future::plan(future::multisession)
+# To run in parallel on local cluster, uncomment the next two lines.
+# library(future)
+# future::plan(future::multisession)
 parallel_test <- bf_compare(os_train, os_test)
 parallel_test
 }
