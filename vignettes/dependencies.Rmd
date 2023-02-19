@@ -2,8 +2,6 @@
 title: "Acknowledgements"
 author:
  - name: Vathy M. Kamulete
-   affiliation: Royal Bank of Canada
-   email: vathy.kamulete@rbc.com
 date: "Last Updated: `r Sys.Date()`"
 output: rmarkdown::html_document
 bibliography: vignettes.bib
@@ -13,14 +11,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The key components of `dsos` leverage several `R` packages, including:
+`dsos` depends on several `R` packages, including:
 
 - the `data.table` package [@data.table] for faster `data.frame`.
 - the `ggplot2` package [@ggplot2] for visualizations;
 - the `WeightedROC` package [@WeightedROC] for computing the test statistic;
 - the `simctest` package [@simctest] for sequential Monte Carlo tests;
 
-We are grateful to the authors of each of these packages for making their
+We are grateful to the authors of these packages for making their
 software freely available.
 
 ## References

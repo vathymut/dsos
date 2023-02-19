@@ -2,8 +2,6 @@
 title: "Bring Your Own Scores"
 author:
  - name: Vathy M. Kamulete
-   affiliation: Royal Bank of Canada
-   email: vathy.kamulete@rbc.com
 date: "Last Updated: `r Sys.Date()`"
 bibliography: vignettes.bib
 output:
@@ -27,43 +25,41 @@ library("dsos")
 ```
 
 Please see the [paper](https://openreview.net/forum?id=S5UG2BLi9xc)
-as cited below [@kamulete2022test] for details.
+[@kamulete2022test] for details.
 We denote the R package as `dsos`, to avoid confusion with `D-SOS`, the method.
 
 ## DIY
 
-We show how easy it is to implement `D-SOS` for a particular notion of
-outlyingness. To do so, we need two main ingredients: outlier scores from
-some scoring function and a way to compute $p-$value. Typically, for $p-$values,
-we use permutations. The prefix _pt_ stands for permutation test. For speed,
-this is implemented as a sequential Monte Carlo test with the `simctest`
-package [@simctest]. The function `pt_refit` provides the scaffolding for
-this approach, provided we supply it a user-defined scoring function.
-
-`dsos` may use sample splitting and out-of-bag variants as alternatives to
-permutations for $p-$value calculation. Both sample splitting and out-of-bag
-variants use the asymptotic null distribution for the test statistic. As a
-result, they can be appreciably faster than inference based on permutations.
+To test for adverse shift, we need two main ingredients: outlier scores from
+a scoring function and a way to compute a $p-$value (or a Bayes factor). First,
+the scoring function assigns to a potentially *multivariate* observation a
+*univariate* score. Second, for $p-$value, we may use permutations. The prefix 
+_pt_ stands for permutation test. The function `pt_refit` is a wrapper for this
+approach, provided we supply a user-defined scoring function. Sample splitting
+and out-of-bag variants are alternatives to permutations. Both use the
+asymptotic null distribution and sidestep refitting (recalibrating) the scoring
+function after every permutation. As a result, they can be appreciably faster
+than inference based on permutations.
 
 ## In Action
 
 Take the [`iris`](https://en.wikipedia.org/wiki/Iris_flower_data_set) dataset
-for example. The training set consists of `setosa` (flower species)
-and the test set, of `versicolor`.
+for example. The training set consists of different flower species. We use
+a completely random scoring function `scorer` for illustration: the outlier
+scores are drawn from the uniform distribution.
 
 ```{r iris-od}
 set.seed(12345)
 data(iris)
-x_train <- iris[1:50,1:4] # Training sample: Species == 'setosa'
-x_test <- iris[51:100,1:4] # Test sample: Species == 'versicolor'
-scorer <- function(tr, te) list(train=runif(nrow(tr)), test=runif(nrow(te)))
+x_train <- iris[1:50, 1:4] # Training sample: Species == 'setosa'
+x_test <- iris[51:100, 1:4] # Test sample: Species == 'versicolor'
+scorer <- function(tr, te) list(train = runif(nrow(tr)), test = runif(nrow(te)))
 iris_test <- pt_refit(x_train, x_test, score = scorer)
 plot(iris_test)
 ```
 
-You can plug in your own scoring functions in this framework. 
-`dsos` provides the building blocks to build your own. The workhorse function,
-powering the approach behind the scenes, is a way to calculate the test
-statistic from outlier scores (see `wauc_from_os`).
+`dsos` provides the building blocks for plugging in your own own scoring
+functions. The `scorer` function above is an example of a custom
+scoring function. That is, you can bring your own scores.
 
 ## References

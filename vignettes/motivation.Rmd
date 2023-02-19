@@ -4,8 +4,6 @@ resource_files:
   - images/combined_dsos.png
 author:
  - name: Vathy M. Kamulete
-   affiliation: Royal Bank of Canada
-   email: vathy.kamulete@rbc.com
 date: "Last Updated: `r Sys.Date()`"
 bibliography: vignettes.bib
 output:
@@ -28,8 +26,7 @@ knitr::opts_chunk$set(
 ```
 
 Note that this vignette is adapted from the
-[paper](https://openreview.net/forum?id=S5UG2BLi9xc) as cited
-below [@kamulete2022test].
+[paper](https://openreview.net/forum?id=S5UG2BLi9xc) [@kamulete2022test].
 
 ## Background
 
@@ -66,8 +63,7 @@ the regions –- typically, the outlying regions –- where we are most vulnerab
 To confront false alarms, it uses a robust test statistic, namely the
 weighted area under the receiver operating characteristic curve (WAUC).
 The weights in the WAUC discount the safe regions of the
-distribution. To the best of our knowledge, this is the first time that the
-WAUC is being used as a test statistic in this context. The goal of `D-SOS` is
+distribution. The goal of `D-SOS` is
 to detect *non-negligible adverse shifts*. This is reminiscent of
 noninferiority tests, widely used in healthcare to determine if a new
 treatment is in fact not inferior to an older one. Colloquially, the `D-SOS`

@@ -78,8 +78,7 @@ as_pvalue(null_bf$bayes_factor)
 ```
 
 In all cases, we fail to reject the null of no adverse shift. Note how
-we can convert Bayes factors into
-![p](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;p "p")-value.
+we can convert a Bayes factor into a $p$-value.
 
 We can repeat this exercise when there is an adverse shift. Again, with
 the permutation test:
@@ -108,11 +107,11 @@ as_pvalue(shift_bf$bayes_factor)
 #> [1] 0.0215
 ```
 
-We would reject the null of no adverse shift in both cases: the test set
+We would reject the null of no adverse shift in all cases: the test set
 is worse off relative to the reference (training) scores.
 
-The function `bf_compare` comes in handy. It computes and compares Bayes
-factors for the frequentist and Bayesian approach at the same time.
+The function `bf_compare` is handy: it computes and contrasts Bayes
+factors for the frequentist and Bayesian approach.
 
 ``` r
 shift_all <- bf_compare(os_train, os_shift)
