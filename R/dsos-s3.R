@@ -16,8 +16,7 @@ plot_outliers <- function(data, os_range) {
   g <- g + ggplot2::stat_ecdf(geom = "step", pad = TRUE, size = 1.2)
   g <- g + ggplot2::scale_y_continuous(
     name = "Percentile",
-    trans = "exp",
-    labels = scales::percent
+    labels = scales::label_percent(accuracy = 1)
   )
   g <- g + ggplot2::scale_color_brewer(name = NULL, type = "qual")
   x_ticks <- create_x_ticks(os_range)
@@ -65,7 +64,7 @@ annotate_bf <- function(bf) {
     "text",
     x = -Inf,
     y = Inf,
-    label = paste0("BF = ", round(bf, 2)),
+    label = paste0("BF=", round(bf, 2)),
     hjust = 0,
     vjust = 1,
     size = 9
