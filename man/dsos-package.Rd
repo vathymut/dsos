@@ -17,7 +17,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Vathy M. Kamulete \email{vathy.kamulete@rbccm.com} (\href{https://orcid.org/0000-0002-4451-3743}{ORCID})
+\strong{Maintainer}: Vathy M. Kamulete \email{vathymut@gmail.com} (\href{https://orcid.org/0000-0002-4451-3743}{ORCID})
 
 Other contributors:
 \itemize{

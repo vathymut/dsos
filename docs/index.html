@@ -135,7 +135,7 @@
 <span><span class="co"># plot(null_bf)</span></span>
 <span><span class="fu"><a href="reference/as_pvalue.html">as_pvalue</a></span><span class="op">(</span><span class="va">null_bf</span><span class="op">$</span><span class="va">bayes_factor</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.903</span></span></code></pre></div>
-<p>In all cases, we fail to reject the null of no adverse shift. Note how we can convert Bayes factors into <img src="https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&amp;space;%5Cbg_white&amp;space;p" title="p" alt="p">-value.</p>
+<p>In all cases, we fail to reject the null of no adverse shift. Note how we can convert a Bayes factor into a <span class="math inline"><em>p</em></span>-value.</p>
 <p>We can repeat this exercise when there is an adverse shift. Again, with the permutation test:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">os_shift</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="va">n</span>, mean <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span></span>
@@ -152,8 +152,8 @@
 <span><span class="co"># plot(shift_bf)</span></span>
 <span><span class="fu"><a href="reference/as_pvalue.html">as_pvalue</a></span><span class="op">(</span><span class="va">shift_bf</span><span class="op">$</span><span class="va">bayes_factor</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.0215</span></span></code></pre></div>
-<p>We would reject the null of no adverse shift in both cases: the test set is worse off relative to the reference (training) scores.</p>
-<p>The function <code>bf_compare</code> comes in handy. It computes and compares Bayes factors for the frequentist and Bayesian approach at the same time.</p>
+<p>We would reject the null of no adverse shift in all cases: the test set is worse off relative to the reference (training) scores.</p>
+<p>The function <code>bf_compare</code> is handy: it computes and contrasts Bayes factors for the frequentist and Bayesian approach.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">shift_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bf_compare.html">bf_compare</a></span><span class="op">(</span><span class="va">os_train</span>, <span class="va">os_shift</span><span class="op">)</span></span>
 <span><span class="va">shift_all</span></span>
@@ -240,7 +240,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

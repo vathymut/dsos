@@ -87,12 +87,8 @@
       <h1 data-toc-skip>A 10-minute Crash Course</h1>
                         <h4 data-toc-skip class="author">Vathy M.
 Kamulete</h4>
-            <address class="author_afil">
-      Royal Bank of
-Canada<br><a class="author_email" href="mailto:#"></a><a href="mailto:vathy.kamulete@rbc.com" class="email">vathy.kamulete@rbc.com</a>
-      </address>
-                  
-            <h4 data-toc-skip class="date">Last Updated: 2023-01-14</h4>
+                        
+            <h4 data-toc-skip class="date">Last Updated: 2023-02-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vathymut/dsos/blob/HEAD/vignettes/motivation.Rmd" class="external-link"><code>vignettes/motivation.Rmd</code></a></small>
       <div class="hidden name"><code>motivation.Rmd</code></div>
@@ -101,8 +97,7 @@ Canada<br><a class="author_email" href="mailto:#"></a><a href="mailto:vathy.kamu
 
     
     
-<p>Note that this vignette is adapted from the <a href="https://openreview.net/forum?id=S5UG2BLi9xc" class="external-link">paper</a> as cited
-below <span class="citation">(Kamulete 2022)</span>.</p>
+<p>Note that this vignette is adapted from the <a href="https://openreview.net/forum?id=S5UG2BLi9xc" class="external-link">paper</a> <span class="citation">(Kamulete 2022)</span>.</p>
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
@@ -139,14 +134,13 @@ pays more attention to the regions –- typically, the outlying regions –-
 where we are most vulnerable. To confront false alarms, it uses a robust
 test statistic, namely the weighted area under the receiver operating
 characteristic curve (WAUC). The weights in the WAUC discount the safe
-regions of the distribution. To the best of our knowledge, this is the
-first time that the WAUC is being used as a test statistic in this
-context. The goal of <code>D-SOS</code> is to detect <em>non-negligible
-adverse shifts</em>. This is reminiscent of noninferiority tests, widely
-used in healthcare to determine if a new treatment is in fact not
-inferior to an older one. Colloquially, the <code>D-SOS</code> null
-hypothesis holds that the new sample is not substantively worse than the
-old sample, and not that the two are equal.</p>
+regions of the distribution. The goal of <code>D-SOS</code> is to detect
+<em>non-negligible adverse shifts</em>. This is reminiscent of
+noninferiority tests, widely used in healthcare to determine if a new
+treatment is in fact not inferior to an older one. Colloquially, the
+<code>D-SOS</code> null hypothesis holds that the new sample is not
+substantively worse than the old sample, and not that the two are
+equal.</p>
 <p><code>D-SOS</code> moves beyond tests of equal distributions and lets
 users specify which notions of outlyingness to probe. The choice of the
 score function plays a central role in formalizing what we mean by
@@ -261,7 +255,7 @@ Whang. 2019. <span>“Data Validation for Machine Learning.”</span>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

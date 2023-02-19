@@ -21,6 +21,8 @@ to recreate this behaviour.
 
 * Updated README with Bayesian example and new links.
 
+* Plotted test results without transforming the y-axis.
+
 # dsos 0.1.1
 
 ## Breaking changes

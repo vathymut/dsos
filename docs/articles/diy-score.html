@@ -87,12 +87,8 @@
       <h1 data-toc-skip>Bring Your Own Scores</h1>
                         <h4 data-toc-skip class="author">Vathy M.
 Kamulete</h4>
-            <address class="author_afil">
-      Royal Bank of
-Canada<br><a class="author_email" href="mailto:#"></a><a href="mailto:vathy.kamulete@rbc.com" class="email">vathy.kamulete@rbc.com</a>
-      </address>
-                  
-            <h4 data-toc-skip class="date">Last Updated: 2023-01-14</h4>
+                        
+            <h4 data-toc-skip class="date">Last Updated: 2023-02-18</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/vathymut/dsos/blob/HEAD/vignettes/diy-score.Rmd" class="external-link"><code>vignettes/diy-score.Rmd</code></a></small>
       <div class="hidden name"><code>diy-score.Rmd</code></div>
@@ -101,60 +97,50 @@ Canada<br><a class="author_email" href="mailto:#"></a><a href="mailto:vathy.kamu
 
     
     
-<p>Please see the <a href="https://openreview.net/forum?id=S5UG2BLi9xc" class="external-link">paper</a> as cited
-below <span class="citation">(Kamulete 2022)</span> for details. We
-denote the R package as <code>dsos</code>, to avoid confusion with
+<p>Please see the <a href="https://openreview.net/forum?id=S5UG2BLi9xc" class="external-link">paper</a> <span class="citation">(Kamulete 2022)</span> for details. We denote the R
+package as <code>dsos</code>, to avoid confusion with
 <code>D-SOS</code>, the method.</p>
 <div class="section level2">
 <h2 id="diy">DIY<a class="anchor" aria-label="anchor" href="#diy"></a>
 </h2>
-<p>We show how easy it is to implement <code>D-SOS</code> for a
-particular notion of outlyingness. To do so, we need two main
-ingredients: outlier scores from some scoring function and a way to
-compute <span class="math inline">\(p-\)</span>value. Typically, for
-<span class="math inline">\(p-\)</span>values, we use permutations. The
-prefix <em>pt</em> stands for permutation test. For speed, this is
-implemented as a sequential Monte Carlo test with the
-<code>simctest</code> package <span class="citation">(Gandy
-2009)</span>. The function <code>pt_refit</code> provides the
-scaffolding for this approach, provided we supply it a user-defined
-scoring function.</p>
-<p><code>dsos</code> may use sample splitting and out-of-bag variants as
-alternatives to permutations for <span class="math inline">\(p-\)</span>value calculation. Both sample
-splitting and out-of-bag variants use the asymptotic null distribution
-for the test statistic. As a result, they can be appreciably faster than
-inference based on permutations.</p>
+<p>To test for adverse shift, we need two main ingredients: outlier
+scores from a scoring function and a way to compute a <span class="math inline">\(p-\)</span>value (or a Bayes factor). First, the
+scoring function assigns to a potentially <em>multivariate</em>
+observation a <em>univariate</em> score. Second, for <span class="math inline">\(p-\)</span>value, we may use permutations. The
+prefix <em>pt</em> stands for permutation test. The function
+<code>pt_refit</code> is a wrapper for this approach, provided we supply
+a user-defined scoring function. Sample splitting and out-of-bag
+variants are alternatives to permutations. Both use the asymptotic null
+distribution and sidestep refitting (recalibrating) the scoring function
+after every permutation. As a result, they can be appreciably faster
+than inference based on permutations.</p>
 </div>
 <div class="section level2">
 <h2 id="in-action">In Action<a class="anchor" aria-label="anchor" href="#in-action"></a>
 </h2>
 <p>Take the <a href="https://en.wikipedia.org/wiki/Iris_flower_data_set" class="external-link"><code>iris</code></a>
-dataset for example. The training set consists of <code>setosa</code>
-(flower species) and the test set, of <code>versicolor</code>.</p>
+dataset for example. The training set consists of different flower
+species. We use a completely random scoring function <code>scorer</code>
+for illustration: the outlier scores are drawn from the uniform
+distribution.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span>
-<span><span class="va">x_train</span> <span class="op">&lt;-</span> <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span> <span class="co"># Training sample: Species == 'setosa'</span></span>
-<span><span class="va">x_test</span> <span class="op">&lt;-</span> <span class="va">iris</span><span class="op">[</span><span class="fl">51</span><span class="op">:</span><span class="fl">100</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span> <span class="co"># Test sample: Species == 'versicolor'</span></span>
-<span><span class="va">scorer</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">tr</span>, <span class="va">te</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>train<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tr</span><span class="op">)</span><span class="op">)</span>, test<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">te</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">x_train</span> <span class="op">&lt;-</span> <span class="va">iris</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span> <span class="co"># Training sample: Species == 'setosa'</span></span>
+<span><span class="va">x_test</span> <span class="op">&lt;-</span> <span class="va">iris</span><span class="op">[</span><span class="fl">51</span><span class="op">:</span><span class="fl">100</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span> <span class="co"># Test sample: Species == 'versicolor'</span></span>
+<span><span class="va">scorer</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">tr</span>, <span class="va">te</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>train <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tr</span><span class="op">)</span><span class="op">)</span>, test <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">te</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">iris_test</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/pt_refit.html">pt_refit</a></span><span class="op">(</span><span class="va">x_train</span>, <span class="va">x_test</span>, score <span class="op">=</span> <span class="va">scorer</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">iris_test</span><span class="op">)</span></span></code></pre></div>
 <p><img src="diy-score_files/figure-html/iris-od-1.png" width="700"></p>
-<p>You can plug in your own scoring functions in this framework.
-<code>dsos</code> provides the building blocks to build your own. The
-workhorse function, powering the approach behind the scenes, is a way to
-calculate the test statistic from outlier scores (see
-<code>wauc_from_os</code>).</p>
+<p><code>dsos</code> provides the building blocks for plugging in your
+own own scoring functions. The <code>scorer</code> function above is an
+example of a custom scoring function. That is, you can bring your own
+scores.</p>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-simctest" class="csl-entry">
-Gandy, Axel. 2009. <span>“Sequential Implementation of Monte Carlo Tests
-with Uniformly Bounded Resampling Risk.”</span> <em>Journal of the
-American Statistical Association</em> 104 (488): 1504–11.
-</div>
 <div id="ref-kamulete2022test" class="csl-entry">
 Kamulete, Vathy M. 2022. <span>“Test for Non-Negligible Adverse
 Shifts.”</span> In <em>The 38th Conference on Uncertainty in Artificial
@@ -181,7 +167,7 @@ Intelligence</em>. <a href="https://openreview.net/forum?id=S5UG2BLi9xc" class="
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
